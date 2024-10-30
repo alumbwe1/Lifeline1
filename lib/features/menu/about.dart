@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AboutUsPage extends StatelessWidget {
+  const AboutUsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,11 +11,11 @@ class AboutUsPage extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
           ),
         ),
-        title: Text('About Us'),
+        title: const Text('About Us'),
         automaticallyImplyLeading: false,
       ),
       body: Container(
@@ -22,8 +24,8 @@ class AboutUsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 32),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
+            const Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 25),
               child: Text(
                 'Lifeline - Your Emergency Companion',
                 style: TextStyle(

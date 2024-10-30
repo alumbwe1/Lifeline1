@@ -1,34 +1,23 @@
 class Ambulance {
-  final String name;
-  final String phoneNumber;
-  final String location;
-  final String imagePath;
+  String name;
+  String image;
+  String location;
+  String phone_number;
 
   Ambulance({
     required this.name,
-    required this.phoneNumber,
+    required this.image,
     required this.location,
-    required this.imagePath,
+    required this.phone_number,
   });
-}
 
-final List<Ambulance> allStations = [
-  Ambulance(
-    name: 'Chirundu1',
-    phoneNumber: '123-456-7890',
-    location: 'Chirundu',
-    imagePath: 'assets/gps.png',
-  ),
-  Ambulance(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/back.jpg',
-  ),
-  Ambulance(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/fire.jpg',
-  ),
-];
+  factory Ambulance.fromJson(Map<String, dynamic> json) {
+    return Ambulance(
+      name: json['name'] ?? '',
+      image: json['image'] ?? '',
+      location: json['location'] ?? '',
+      phone_number: json['phone_number'] ?? '',
+
+    );
+  }
+}

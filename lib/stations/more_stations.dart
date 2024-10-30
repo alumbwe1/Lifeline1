@@ -1,10 +1,14 @@
-// stations_page.dart
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../classes/more.dart';
 import '../components/back_arrow.dart';
 import '../components/seach_bar.dart' as CustomSearchBar;
 import '../core/station_card.dart';
 import '../core/bottom_sheet.dart';
+import '../core/urls.dart';
+import '../database helpers/more_model.dart';
 
 class MorePage extends StatefulWidget {
   MorePage({Key? key}) : super(key: key);
@@ -20,34 +24,64 @@ class _MorePageState extends State<MorePage> {
   @override
   void initState() {
     super.initState();
-    displayedMore = allStations;
+    _fetchMoreServices(); // Fetch more services when the page is initialized
+  }
+
+  // Function to fetch more services from the Django server
+  Future<void> _fetchMoreServices() async {
+    try {
+      // Step 1: Try to fetch cached data
+      List<More> cachedMoreServices = await MoreDataHelper.getCachedData();
+
+      if (cachedMoreServices.isNotEmpty) {
+        setState(() {
+          displayedMore = cachedMoreServices;
+        });
+      }
+
+      // Step 2: Fetch data from the server
+      final response = await http.get(Uri.parse(more));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+
+        // Step 3: Update state with data from the server
+        setState(() {
+          displayedMore = data.map((json) => More.fromJson(json)).toList();
+        });
+
+        // Step 4: Cache the data for offline usage
+        await MoreDataHelper.cacheData(displayedMore);
+      } else {
+        // Handle error when fetching from the server
+        print('Failed to load more services: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle general error
+      print('Error fetching more services: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title:
+        CustomSearchBar.SearchBar(
+          controller: _searchController,
+          onSearch: _search,
+          titleSearch: 'Search for Police stations',
+        ),
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SafeArea(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const BackArrow(),
-                    CustomSearchBar.SearchBar(
-                      controller: _searchController,
-                      onSearch: _search,
-                      titleSearch: 'Seach for any service',
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+
           Expanded(
-            child: _buildStationList(),
+            child: _buildServiceList(),
           ),
         ],
       ),
@@ -56,14 +90,14 @@ class _MorePageState extends State<MorePage> {
 
   void _search(String query) {
     setState(() {
-      displayedMore = allStations
+      displayedMore = displayedMore
           .where(
-              (More) => More.name.toLowerCase().contains(query.toLowerCase()))
+              (more) => more.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
 
-  Widget _buildStationList() {
+  Widget _buildServiceList() {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
@@ -72,15 +106,15 @@ class _MorePageState extends State<MorePage> {
                 const SizedBox(height: 16),
                 const Text('No results found'),
               ]
-            : displayedMore.map((More) {
+            : displayedMore.map((more) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomStationCard(
-                    name: More.name,
-                    imagePath: More.imagePath,
-                    phoneNumber: More.phoneNumber,
+                    name: more.name,
+                    image: more.image,
+                    phoneNumber: more.phone_number,
                     onPressed: () {
-                      _handleServiceRequest(More);
+                      _handleServiceRequest(more);
                     },
                   ),
                 );
@@ -89,7 +123,7 @@ class _MorePageState extends State<MorePage> {
     );
   }
 
-  void _handleServiceRequest(More More) {
+  void _handleServiceRequest(More more) {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -101,23 +135,24 @@ class _MorePageState extends State<MorePage> {
       ),
       builder: (BuildContext context) {
         return ServiceRequestBottomSheet(
-          location: More.location,
-          phoneNumber: More.phoneNumber,
+          name: more.name,
+          location: more.location,
+          phoneNumber: more.phone_number,
           onPressed: () {
-            _showServiceRequestedDialog(More);
+            _showServiceRequestedDialog(more);
           },
         );
       },
     );
   }
 
-  void _showServiceRequestedDialog(More More) {
+  void _showServiceRequestedDialog(More more) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Service Requested'),
-          content: Text('You have requested service from ${More.name}.'),
+          content: Text('You have requested service from ${more.name}.'),
           actions: [
             ElevatedButton(
               onPressed: () {

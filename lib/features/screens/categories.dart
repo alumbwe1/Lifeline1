@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lifeline/stations/adult_child_care.dart';
 import 'package:lifeline/stations/ambulance_stations.dart';
 import 'package:lifeline/stations/firebrigade_station.dart';
 import 'package:lifeline/stations/more_stations.dart';
 import 'package:lifeline/stations/police_stations.dart';
-// Import your other pages as needed, e.g., '../stations/fire.dart';
 
 class ServicesList extends StatelessWidget {
   final List<ServiceItem> services;
@@ -26,15 +26,22 @@ class ServicesList extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: Padding(
+              child:  Padding(
                 padding: const EdgeInsets.only(left: 15.0),
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  size: 30,
+                child: Container(
+                   decoration: BoxDecoration(
+                     color: Colors.black,
+                     borderRadius: BorderRadius.circular(50),
+                   ),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    size: 30,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-            SizedBox(width: 50),
+            const SizedBox(width: 50),
           ],
         ),
         automaticallyImplyLeading: false,
@@ -44,8 +51,8 @@ class ServicesList extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
+            const Padding(
+              padding: EdgeInsets.all(12.0),
               child: Text(
                 'Please, choose your \nemergency service?',
                 style: TextStyle(
@@ -54,10 +61,10 @@ class ServicesList extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Column(
               children:
-                  services.map((service) => ListOfService(service)).toList(),
+              services.map((service) => ListOfService(service)).toList(),
             ),
           ],
         ),
@@ -76,7 +83,7 @@ class ServiceItem {
 class ListOfService extends StatelessWidget {
   final ServiceItem service;
 
-  ListOfService(this.service);
+  const ListOfService(this.service, {Key? key});
 
   void navigateToSpecificPage(BuildContext context) {
     // Implement logic here to determine which page to navigate to based on the selected service
@@ -109,9 +116,10 @@ class ListOfService extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AmbulancePage(),
+            builder: (context) => const AmbulancePage(),
           ),
         );
+        break;
       case 'More Services':
         Navigator.push(
           context,
@@ -119,7 +127,8 @@ class ListOfService extends StatelessWidget {
             builder: (context) => MorePage(),
           ),
         );
-      // Add more cases as needed for other services
+        break;
+    // Add more cases as needed for other services
       default:
       // Handle the default case or do nothing
     }
@@ -127,32 +136,40 @@ class ListOfService extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    return GestureDetector(
       onTap: () {
         navigateToSpecificPage(context);
       },
-      leading: Container(
-        height: 70,
-        width: 70,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.red,
+           // Set your desired background color
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Image.asset(
-          service.image,
-          height: 15,
-          width: 15,
-          color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+             width: 90,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.red.shade900,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Image.asset(service.image,height: 30,width: 50,color: Colors.white,),
+            ),
+            Text(
+              service.name,
+              style: const TextStyle(
+                fontSize: 20,
+                // Set your desired text color
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, color: Colors.black),
+          ],
         ),
       ),
-      title: Text(
-        service.name,
-        style: TextStyle(
-          fontSize: 20,
-        ),
-      ),
-      trailing: Icon(Icons.arrow_forward_ios),
     );
   }
 }

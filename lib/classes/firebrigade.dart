@@ -1,34 +1,23 @@
-class Firebrigade {
-  final String name;
-  final String phoneNumber;
-  final String location;
-  final String imagePath;
+class FireBrigade {
+  String name;
+  String image;
+  String location;
+  String phone_number;
 
-  Firebrigade({
+  FireBrigade({
     required this.name,
-    required this.phoneNumber,
+    required this.image,
     required this.location,
-    required this.imagePath,
+    required this.phone_number,
   });
-}
 
-final List<Firebrigade> allStations = [
-  Firebrigade(
-    name: 'Chirundu1',
-    phoneNumber: '123-456-7890',
-    location: 'Chirundu',
-    imagePath: 'assets/profile.jpeg',
-  ),
-  Firebrigade(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/back.jpg',
-  ),
-  Firebrigade(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/fire.jpg',
-  ),
-];
+  factory FireBrigade.fromJson(Map<String, dynamic> json) {
+    return FireBrigade(
+      name: json['name'] ?? '',
+      image: json['image'] ?? '',
+      location: json['location'] ?? '',
+      phone_number: json['phone_number'] ?? '',
+
+    );
+  }
+}

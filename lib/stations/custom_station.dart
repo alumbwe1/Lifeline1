@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../components/back_arrow.dart';
 
 class CustomPage extends StatelessWidget {
@@ -9,12 +8,12 @@ class CustomPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
+        title: const Row(
           children: [
             BackArrow(),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: EdgeInsets.symmetric(horizontal: 8),
                 child: TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 8),
@@ -23,7 +22,7 @@ class CustomPage extends StatelessWidget {
                       Icons.search,
                       color: Colors.grey,
                     ),
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,

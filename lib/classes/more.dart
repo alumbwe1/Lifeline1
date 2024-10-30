@@ -1,34 +1,23 @@
 class More {
-  final String name;
-  final String phoneNumber;
-  final String location;
-  final String imagePath;
+  String name;
+  String image;
+  String location;
+  String phone_number;
 
   More({
     required this.name,
-    required this.phoneNumber,
+    required this.image,
     required this.location,
-    required this.imagePath,
+    required this.phone_number,
   });
-}
 
-final List<More> allStations = [
-  More(
-    name: 'Chirundu1',
-    phoneNumber: '123-456-7890',
-    location: 'Chirundu',
-    imagePath: 'assets/profile.jpeg',
-  ),
-  More(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/back.jpg',
-  ),
-  More(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/fire.jpg',
-  ),
-];
+  factory More.fromJson(Map<String, dynamic> json) {
+    return More(
+      name: json['name'] ?? '',
+      image: json['image'] ?? '',
+      location: json['location'] ?? '',
+      phone_number: json['phone_number'] ?? '',
+
+    );
+  }
+}

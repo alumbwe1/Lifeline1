@@ -1,187 +1,215 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:lifeline/core/urls.dart';
+import 'package:lifeline/features/screens/bottom_screen.dart';
 import 'package:lifeline/features/screens/home_screen.dart';
+import 'dart:convert';
 
+import '../../proveder.dart';
 import 'sign_up.dart';
+import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  late TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<String> loginUser(BuildContext context) async {
+    try {
+      final usernameProvider =
+      Provider.of<UsernameProvider>(context, listen: false);
+      final fullName = usernameProvider.username;
+      final password = passwordController.text;
+
+      final response = await http.post(
+        Uri.parse(users), // Replace with your login endpoint
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'full_name': fullName,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return 'Login successful';
+      } else {
+        // Handle login failure
+        return 'Incorrect full name or password';
+      }
+    } catch (error) {
+      // Handle error
+      return 'An error occurred. Please try again later.';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xff881736),
-                  Color(0xff281537),
+      backgroundColor: Colors.blue.shade900,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.blue.shade900,
+              ),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Hello\nSign in!',
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Image.asset('assets/login.png', height: 150,)
                 ],
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 60,
-                left: 22,
-              ),
-              child: Text(
-                'Hello\nSign in!',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 200),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              height: double.infinity,
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 18,
-                  right: 18,
-                ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Display the stored username using UsernameProvider
+                  TextField(
+                    readOnly: true,
+                    controller: TextEditingController(
+                      text:
+                      'Full Name: ${Provider.of<UsernameProvider>(context).username}',
+                    ),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Colors.blue,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      label: const Text(
+                        'Full Name',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    obscureText: true,
+                    controller: passwordController,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    onChanged: (value) {
+                      // You can handle password changes here if needed
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Colors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      label: const Text(
+                        'Password',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    height: 70,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.lightGreen,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: ()  {
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyHomePage(),),);
+                        },
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        height: 40,
-                      ),
-                      TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          label: Text(
-                            'Email',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff881736),
-                            ),
-                          ),
+                      const Text(
+                        "Don't have an account?",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 20),
-                      TextField(
-                        obscureText: true, // Obscure text for password
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.blue,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignUpPage(),
                             ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          label: Text(
-                            'Password',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff881736),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          'Forgot password?',
+                          );
+                        },
+                        child: const Text(
+                          'Sign Up',
                           style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff281537),
+                            color: Colors.white,
+                            fontSize: 16,
                           ),
                         ),
-                      ),
-                      SizedBox(height: 70),
-                      Container(
-                        height: 55,
-                        width: 300,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xff881736),
-                              Color(0xff281537),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomePage(),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'SIGN IN',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Don't have an account?",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SignUpPage(),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 17,
-                              ),
-                            ),
-                          )
-                        ],
                       )
                     ],
-                  ),
-                ),
+                  )
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

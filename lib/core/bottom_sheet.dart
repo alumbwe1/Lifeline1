@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:lifeline/core/urls.dart';
+import 'package:lifeline/features/screens/report_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class ServiceRequestBottomSheet extends StatelessWidget {
   final String phoneNumber;
   final String location;
+  final String name;
 
-  const ServiceRequestBottomSheet({
+   const ServiceRequestBottomSheet({
     Key? key,
+    required this.name,
     required this.phoneNumber,
-    required this.location,
-    required Null Function() onPressed,
+    required this.location, required  Function() onPressed,
   }) : super(key: key);
 
   void _makePhoneCall() async {
@@ -32,6 +36,7 @@ class ServiceRequestBottomSheet extends StatelessWidget {
       print('Could not launch messaging app');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -92,10 +97,10 @@ class ServiceRequestBottomSheet extends StatelessWidget {
                     const SizedBox(
                       width: 12,
                     ),
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         ' Available 24/7 for any emergency.',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                         ),
                       ),
@@ -105,44 +110,34 @@ class ServiceRequestBottomSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 25),
-              child: ElevatedButton(
-                onPressed: _makePhoneCall,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange[400],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(35),
-                  ),
-                ),
-                child: SizedBox(
-                  height: 55, // Increase the height of the button
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/phone-call.png',
-                        height: 40,
-                      ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        'Call Now',
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
+            ElevatedButton(
+              onPressed: _makePhoneCall,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange[400],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35),
                 ),
               ),
-            ),
-            const Text(
-              'OR',
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+              child: SizedBox(
+                height: 55, // Increase the height of the button
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/phone-call.png',
+                      height: 40,
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Call Now',
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -167,6 +162,39 @@ class ServiceRequestBottomSheet extends StatelessWidget {
                     const SizedBox(width: 14),
                     const Text(
                       'Text Us',
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10,),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ReportScreen(name: name, ),),);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange[400],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(35),
+                ),
+              ),
+              child: SizedBox(
+                height: 55, // Increase the height of the button
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/messenger.png',
+                      height: 40,
+                    ),
+                    const SizedBox(width: 14),
+                    const Text(
+                      'Send Report',
                       style: TextStyle(
                         fontSize: 22,
                         color: Colors.black,

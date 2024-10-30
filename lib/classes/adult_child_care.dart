@@ -1,34 +1,22 @@
 class AdultChildCare {
-  final String name;
-  final String phoneNumber;
-  final String location;
-  final String imagePath;
+  String name;
+  String image;
+  String location;
+  String phone_number;
 
   AdultChildCare({
     required this.name,
-    required this.phoneNumber,
+    required this.image,
     required this.location,
-    required this.imagePath,
+    required this.phone_number,
   });
-}
 
-final List<AdultChildCare> allAdults = [
-  AdultChildCare(
-    name: 'Chirundu1',
-    phoneNumber: '123-456-7890',
-    location: 'Chirundu',
-    imagePath: 'assets/profile.jpeg',
-  ),
-  AdultChildCare(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/back.jpg',
-  ),
-  AdultChildCare(
-    name: 'Kalingalinga',
-    phoneNumber: '987-654-3210',
-    location: 'Lusaka',
-    imagePath: 'assets/fire.jpg',
-  ),
-];
+  factory AdultChildCare.fromJson(Map<String, dynamic> json) {
+    return AdultChildCare(
+      name: json['name'] ?? '',
+      image: json['image'] ?? '',
+      location: json['location'] ?? '',
+      phone_number: json['phone_number'] ?? '',
+    );
+  }
+}

@@ -12,7 +12,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color(
@@ -35,7 +35,7 @@ class WelcomeScreen extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             const Text(
@@ -45,7 +45,7 @@ class WelcomeScreen extends StatelessWidget {
                 fontSize: 30,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             GestureDetector(
@@ -53,7 +53,7 @@ class WelcomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+                    builder: (context) => const LoginPage(),
                   ),
                 );
               },
@@ -64,8 +64,8 @@ class WelcomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: Colors.white),
                 ),
-                child: Center(
-                  child: const Text(
+                child: const Center(
+                  child: Text(
                     'SIGN IN',
                     style: TextStyle(
                       fontSize: 20,
@@ -95,8 +95,8 @@ class WelcomeScreen extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Center(
-                  child: const Text(
+                child: const Center(
+                  child: Text(
                     'SIGN UP',
                     style: TextStyle(
                       fontSize: 20,
@@ -107,35 +107,6 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Spacer(),
-            Text(
-              'Login with social media accounts',
-              style: TextStyle(
-                fontSize: 17,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(
-              height: 6,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/facebook.png',
-                  height: 40,
-                  width: 40,
-                ),
-                SizedBox(
-                  width: 50,
-                ),
-                Image.asset(
-                  'assets/Google.png',
-                  height: 35,
-                  width: 40,
-                ),
-              ],
-            )
           ],
         ),
       ),

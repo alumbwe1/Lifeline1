@@ -1,10 +1,14 @@
-// stations_page.dart
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:lifeline/core/urls.dart';
 import '../classes/firebrigade.dart';
-import '../components/back_arrow.dart';
+
 import '../components/seach_bar.dart' as CustomSearchBar;
 import '../core/station_card.dart';
 import '../core/bottom_sheet.dart';
+import '../database helpers/firebrigade_model.dart';
 
 class FireBrigadePage extends StatefulWidget {
   FireBrigadePage({Key? key}) : super(key: key);
@@ -14,38 +18,71 @@ class FireBrigadePage extends StatefulWidget {
 }
 
 class _FireBrigadePageState extends State<FireBrigadePage> {
-  List<Firebrigade> displayedFirebrigade = [];
+  List<FireBrigade> displayedFirebrigade = [];
   TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    displayedFirebrigade = allStations;
+    _fetchFireBrigadeStations(); // Fetch fire brigade stations when the page is initialized
+  }
+
+  // Function to fetch fire brigade stations from the Django server
+  Future<void> _fetchFireBrigadeStations() async {
+    try {
+      // Step 1: Try to fetch cached data
+      List<FireBrigade> cachedFirebrigades =
+          await FireBrigadeDataHelper.getCachedData();
+
+      if (cachedFirebrigades.isNotEmpty) {
+        setState(() {
+          displayedFirebrigade = cachedFirebrigades;
+        });
+      }
+
+      // Step 2: Fetch data from the server
+      final response =
+          await http.get(Uri.parse(firebrigade));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+
+        // Step 3: Update state with data from the server
+        setState(() {
+          displayedFirebrigade =
+              data.map((json) => FireBrigade.fromJson(json)).toList();
+        });
+
+        // Step 4: Cache the data for offline usage
+        await FireBrigadeDataHelper.cacheData(displayedFirebrigade);
+      } else {
+        // Handle error when fetching from the server
+        print('Failed to load fire brigade stations: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle general error
+      print('Error fetching fire brigade stations: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title:
+        CustomSearchBar.SearchBar(
+          controller: _searchController,
+          onSearch: _search,
+          titleSearch: 'Search for firebrigade stations',
+        ),
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SafeArea(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const BackArrow(),
-                    CustomSearchBar.SearchBar(
-                      controller: _searchController,
-                      onSearch: _search,
-                      titleSearch: 'Search for firebrigade stations',
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+
           Expanded(
             child: _buildStationList(),
           ),
@@ -56,9 +93,9 @@ class _FireBrigadePageState extends State<FireBrigadePage> {
 
   void _search(String query) {
     setState(() {
-      displayedFirebrigade = allStations
-          .where((Firebrigade) =>
-              Firebrigade.name.toLowerCase().contains(query.toLowerCase()))
+      displayedFirebrigade = displayedFirebrigade
+          .where((firebrigade) =>
+              firebrigade.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -72,16 +109,15 @@ class _FireBrigadePageState extends State<FireBrigadePage> {
                 const SizedBox(height: 16),
                 const Text('No results found'),
               ]
-            : displayedFirebrigade.map((Firebrigade) {
+            : displayedFirebrigade.map((firebrigade) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CustomStationCard(
-
-                    name: Firebrigade.name,
-                    imagePath: Firebrigade.imagePath,
-                    phoneNumber: Firebrigade.phoneNumber,
+                    name: firebrigade.name,
+                    image: firebrigade.image,
+                    phoneNumber: firebrigade.phone_number,
                     onPressed: () {
-                      _handleServiceRequest(Firebrigade);
+                      _handleServiceRequest(firebrigade);
                     },
                   ),
                 );
@@ -90,7 +126,7 @@ class _FireBrigadePageState extends State<FireBrigadePage> {
     );
   }
 
-  void _handleServiceRequest(Firebrigade Firebrigade) {
+  void _handleServiceRequest(FireBrigade firebrigade) {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -102,23 +138,24 @@ class _FireBrigadePageState extends State<FireBrigadePage> {
       ),
       builder: (BuildContext context) {
         return ServiceRequestBottomSheet(
-          location: Firebrigade.location,
-          phoneNumber: Firebrigade.phoneNumber,
+          location: firebrigade.location,
+          name: firebrigade.name,
+          phoneNumber: firebrigade.phone_number,
           onPressed: () {
-            _showServiceRequestedDialog(Firebrigade);
+            _showServiceRequestedDialog(firebrigade);
           },
         );
       },
     );
   }
 
-  void _showServiceRequestedDialog(Firebrigade Firebrigade) {
+  void _showServiceRequestedDialog(FireBrigade firebrigade) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Service Requested'),
-          content: Text('You have requested service from ${Firebrigade.name}.'),
+          content: Text('You have requested service from ${firebrigade.name}.'),
           actions: [
             ElevatedButton(
               onPressed: () {

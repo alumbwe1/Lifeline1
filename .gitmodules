@@ -1,0 +1,3 @@
+[submodule "lifeline-frontend"]
+	path = lifeline-frontend
+	url = https://github.com/alumbwe1/lifeline-frontend

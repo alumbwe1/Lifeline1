@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:lifeline/features/screens/bottom_screen.dart';
 import 'package:lifeline/features/screens/onboading_screen.dart';
-
+import 'package:lifeline/features/screens/onboarding_screen.dart';
+import 'package:lifeline/proveder.dart';
+import 'package:provider/provider.dart'; // Import the provider package
 import 'core/notifiers.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // Wrap your app with MultiProvider to provide multiple providers
+    MultiProvider(
+      providers: [
+        // Provide the username using ChangeNotifierProvider
+        ChangeNotifierProvider(
+          create: (context) => UsernameProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
@@ -23,7 +36,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
             useMaterial3: true,
           ),
-          home: OnboardingScreen(),
+          home: const TestScreen(),
         );
       },
     );
