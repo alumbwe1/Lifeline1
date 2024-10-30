@@ -26,18 +26,11 @@ class ServicesList extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
               },
-              child:  Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Container(
-                   decoration: BoxDecoration(
-                     color: Colors.black,
-                     borderRadius: BorderRadius.circular(50),
-                   ),
-                  child: const Icon(
-                    Icons.arrow_back_ios,
-                    size: 30,
-                    color: Colors.white,
-                  ),
+              child:  const Padding(
+                padding: EdgeInsets.only(left: 15.0),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 30,
                 ),
               ),
             ),
